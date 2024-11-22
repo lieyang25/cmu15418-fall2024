@@ -62,27 +62,55 @@ void absVector(float* values, float* output, int N) {
 // to the log_2 of the exponent
 void clampedExpSerial(float* values, int* exponents, float* output, int N) {
     for (int i=0; i<N; i++) {
-	float x = values[i];
-	float result = 1.f;
-	int y = exponents[i];
-	float xpower = x;
-	while (y > 0) {
-	    if (y & 0x1) {
-			result *= xpower;
+		float x = values[i];
+		float result = 1.f;
+		int y = exponents[i];
+		float xpower = x;
+		while (y > 0) {
+			if (y & 0x1) {
+				result *= xpower;
+			}
+			xpower = xpower * xpower;
+			y >>= 1;
 		}
-	    xpower = xpower * xpower;
-	    y >>= 1;
-	}
-	if (result > 4.18f) {
-	    result = 4.18f;
-	}
-	output[i] = result;
+		if (result > 4.18f) {
+			result = 4.18f;
+		}
+		output[i] = result;
     }
 }
+void clampedExpVector(int N, float* values, int* exponents, float* output) {
+	//常量
+	__cmu418_vec_int zero,one;
+	__cmu418_vec_float theMaxResult;
+	zero =_cmu418_vset_int(0);
+	one = _cmu418_vset_int(0x1);
+	theMaxResult = _cmu418_vset_float(4.18f);
 
-void clampedExpVector(float* values, int* exponents, float* output, int N) {
-    // Implement your vectorized version of clampedExpSerial here
-    //  ...
+	for(int i=0;i<N;i += VECTOR_WIDTH) {
+		//声明变量
+		__cmu418_vec_float x,result,xpower;
+		__cmu418_vec_int y;
+		__cmu418_mask maskeAll,checkSum;
+		//赋值变量
+		maskeAll = _cmu418_init_ones();
+		_cmu418_vload_float(x,values+i,maskeAll);
+		_cmu418_vset_float(result,1.0f,maskeAll);
+		_cmu418_vload_int(y,exponents,maskeAll);
+		_cmu418_vmove_float(xpower,x,maskeAll);
+		//比较结果
+		_cmu418_vgt_int(checkSum,y,zero,maskeAll);
+		while(_cmu418_cntbits(checkSum) > 0) {
+			_cmu418_vmult_float(result,result,xpower,checkSum);
+			_cmu418_vmult_float(xpower,xpower,xpower,checkSum);
+			//_cmu418_vmult_float(xpower,xpower.xpower,checkSum);
+			_cmu418_vshiftright_int(y,y,one,maskeAll);
+			_cmu418_vgt_int(checkSum,y,zero,maskeAll);
+		}
+		_cmu418_vgt_float(checkSum,result,theMaxResult,maskeAll);
+		_cmu418_vmove_float(result,theMaxResult,checkSum);
+		_cmu418_vstore_float(output,result,maskeAll);
+	}
 }
 
 
