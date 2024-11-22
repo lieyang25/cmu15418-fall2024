@@ -47,72 +47,88 @@ __cmu418_mask _cmu418_mask_and(__cmu418_mask &maska, __cmu418_mask &maskb);
 // Count the number of 1s in maska
 int _cmu418_cntbits(__cmu418_mask &maska);
 
+//初始化寄存器值
 // Set register to value if vector lane is active
 //  otherwise keep the old value
 void _cmu418_vset_float(__cmu418_vec_float &vecResult, float value, __cmu418_mask &mask);
 void _cmu418_vset_int(__cmu418_vec_int &vecResult, int value, __cmu418_mask &mask);
+
+//初始化寄存器值
 // For user's convenience, returns a vector register with all lanes initialized to value
 __cmu418_vec_float _cmu418_vset_float(float value);
 __cmu418_vec_int _cmu418_vset_int(int value);
 
+//复制
 // Copy values from vector register src to vector register dest if vector lane active
 // otherwise keep the old value
 void _cmu418_vmove_float(__cmu418_vec_float &dest, __cmu418_vec_float &src, __cmu418_mask &mask);
 void _cmu418_vmove_int(__cmu418_vec_int &dest, __cmu418_vec_int &src, __cmu418_mask &mask);
 
+//加载
 // Load values from array src to vector register dest if vector lane active
 //  otherwise keep the old value
 void _cmu418_vload_float(__cmu418_vec_float &dest, float* src, __cmu418_mask &mask);
 void _cmu418_vload_int(__cmu418_vec_int &dest, int* src, __cmu418_mask &mask);
 
+//存储到数组
 // Store values from vector register src to array dest if vector lane active
 //  otherwise keep the old value
 void _cmu418_vstore_float(float* dest, __cmu418_vec_float &src, __cmu418_mask &mask);
 void _cmu418_vstore_int(int* dest, __cmu418_vec_int &src, __cmu418_mask &mask);
 
+//加
 // Return calculation of (veca + vecb) if vector lane active
 //  otherwise keep the old value
 void _cmu418_vadd_float(__cmu418_vec_float &vecResult, __cmu418_vec_float &veca, __cmu418_vec_float &vecb, __cmu418_mask &mask);
 void _cmu418_vadd_int(__cmu418_vec_int &vecResult, __cmu418_vec_int &veca, __cmu418_vec_int &vecb, __cmu418_mask &mask);
 
+//减
 // Return calculation of (veca - vecb) if vector lane active
 //  otherwise keep the old value
 void _cmu418_vsub_float(__cmu418_vec_float &vecResult, __cmu418_vec_float &veca, __cmu418_vec_float &vecb, __cmu418_mask &mask);
 void _cmu418_vsub_int(__cmu418_vec_int &vecResult, __cmu418_vec_int &veca, __cmu418_vec_int &vecb, __cmu418_mask &mask);
 
+//乘
 // Return calculation of (veca * vecb) if vector lane active
 //  otherwise keep the old value
 void _cmu418_vmult_float(__cmu418_vec_float &vecResult, __cmu418_vec_float &veca, __cmu418_vec_float &vecb, __cmu418_mask &mask);
 void _cmu418_vmult_int(__cmu418_vec_int &vecResult, __cmu418_vec_int &veca, __cmu418_vec_int &vecb, __cmu418_mask &mask);
 
+//除
 // Return calculation of (veca / vecb) if vector lane active
 //  otherwise keep the old value
 void _cmu418_vdiv_float(__cmu418_vec_float &vecResult, __cmu418_vec_float &veca, __cmu418_vec_float &vecb, __cmu418_mask &mask);
 void _cmu418_vdiv_int(__cmu418_vec_int &vecResult, __cmu418_vec_int &veca, __cmu418_vec_int &vecb, __cmu418_mask &mask);
 
+//右移
 // Return calculation of (veca >> vecb) if vector lane active
 //  otherwise keep the old value
 void _cmu418_vshiftright_int(__cmu418_vec_int &vecResult, __cmu418_vec_int &veca, __cmu418_vec_int &vecb, __cmu418_mask &mask);
 
+//与
 // Return calculation of (veca & vecb) if vector lane active
 //  otherwise keep the old value
 void _cmu418_vbitand_int(__cmu418_vec_int &vecResult, __cmu418_vec_int &veca, __cmu418_vec_int &vecb, __cmu418_mask &mask);
 
+//绝对值
 // Return calculation of absolute value abs(veca) if vector lane active
 //  otherwise keep the old value
 void _cmu418_vabs_float(__cmu418_vec_float &vecResult, __cmu418_vec_float &veca, __cmu418_mask &mask);
 void _cmu418_vabs_int(__cmu418_vec_int &vecResult, __cmu418_vec_int &veca, __cmu418_mask &mask);
 
+//比较大于
 // Return a mask of (veca > vecb) if vector lane active
 //  otherwise keep the old value
 void _cmu418_vgt_float(__cmu418_mask &vecResult, __cmu418_vec_float &veca, __cmu418_vec_float &vecb, __cmu418_mask &mask);
 void _cmu418_vgt_int(__cmu418_mask &vecResult, __cmu418_vec_int &veca, __cmu418_vec_int &vecb, __cmu418_mask &mask);
 
+//比较小于
 // Return a mask of (veca < vecb) if vector lane active
 //  otherwise keep the old value
 void _cmu418_vlt_float(__cmu418_mask &vecResult, __cmu418_vec_float &veca, __cmu418_vec_float &vecb, __cmu418_mask &mask);
 void _cmu418_vlt_int(__cmu418_mask &vecResult, __cmu418_vec_int &veca, __cmu418_vec_int &vecb, __cmu418_mask &mask);
 
+//比较等于
 // Return a mask of (veca == vecb) if vector lane active
 //  otherwise keep the old value
 void _cmu418_veq_float(__cmu418_mask &vecResult, __cmu418_vec_float &veca, __cmu418_vec_float &vecb, __cmu418_mask &mask);
