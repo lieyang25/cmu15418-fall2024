@@ -79,37 +79,43 @@ void clampedExpSerial(float* values, int* exponents, float* output, int N) {
 		output[i] = result;
     }
 }
-void clampedExpVector(int N, float* values, int* exponents, float* output) {
+
+void clampedExpVector(float* values, int* exponents, float* output, int N) {
 	//常量
 	__cmu418_vec_int zero,one;
-	__cmu418_vec_float theMaxResult;
+	__cmu418_vec_float theMaxResult,fone;
 	zero =_cmu418_vset_int(0);
-	one = _cmu418_vset_int(0x1);
+	one = _cmu418_vset_int(1);
 	theMaxResult = _cmu418_vset_float(4.18f);
-
-	for(int i=0;i<N;i += VECTOR_WIDTH) {
+	fone = _cmu418_vset_float(1.f);
+	for(int i=0;i<N;) {
 		//声明变量
 		__cmu418_vec_float x,result,xpower;
-		__cmu418_vec_int y;
-		__cmu418_mask maskeAll,checkSum;
+		__cmu418_vec_int y,temp;
+		__cmu418_mask maskeAll,checkSum,checkSum2;
 		//赋值变量
-		maskeAll = _cmu418_init_ones();
+		maskeAll = _cmu418_init_ones(std::min(VECTOR_WIDTH,N-i));
 		_cmu418_vload_float(x,values+i,maskeAll);
-		_cmu418_vset_float(result,1.0f,maskeAll);
-		_cmu418_vload_int(y,exponents,maskeAll);
+		_cmu418_vmove_float(result,fone,maskeAll);
+		_cmu418_vload_int(y,exponents+i,maskeAll);
 		_cmu418_vmove_float(xpower,x,maskeAll);
 		//比较结果
 		_cmu418_vgt_int(checkSum,y,zero,maskeAll);
 		while(_cmu418_cntbits(checkSum) > 0) {
-			_cmu418_vmult_float(result,result,xpower,checkSum);
-			_cmu418_vmult_float(xpower,xpower,xpower,checkSum);
-			//_cmu418_vmult_float(xpower,xpower.xpower,checkSum);
+			//判断与
+			_cmu418_vbitand_int(temp,y,one,maskeAll);
+			_cmu418_vgt_int(checkSum2,temp,zero,maskeAll);
+
+			_cmu418_vmult_float(result,result,xpower,checkSum2);
+			_cmu418_vmult_float(xpower,xpower,xpower,maskeAll);
+			
 			_cmu418_vshiftright_int(y,y,one,maskeAll);
 			_cmu418_vgt_int(checkSum,y,zero,maskeAll);
 		}
 		_cmu418_vgt_float(checkSum,result,theMaxResult,maskeAll);
 		_cmu418_vmove_float(result,theMaxResult,checkSum);
-		_cmu418_vstore_float(output,result,maskeAll);
+		_cmu418_vstore_float(output+i,result,maskeAll);
+		i += VECTOR_WIDTH;
 	}
 }
 
