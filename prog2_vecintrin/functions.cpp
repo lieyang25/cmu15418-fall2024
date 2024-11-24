@@ -134,5 +134,24 @@ float arraySumSerial(float* values, int N) {
 float arraySumVector(float* values, int N) {
     // Implement your vectorized version here
     //  ...
-	return 0.f;
+	float ans;
+	__cmu418_mask maskALL;
+	__cmu418_vec_float check;
+	__cmu418_vec_float sum;
+	check = _cmu418_vset_float(0.0f);
+	//累加数组
+	for(int i=0;i<N;) {	
+		maskALL = _cmu418_init_ones(std::min(VECTOR_WIDTH,N-i));
+		_cmu418_vload_float(sum,values+i,maskALL);
+		_cmu418_vadd_float(check,check,sum,maskALL);
+		i+=VECTOR_WIDTH;
+	}
+	//最后计算终值
+	for(int i=0;i<VECTOR_WIDTH/2-1;i++) {
+		_cmu418_hadd_float(check,check);
+		_cmu418_interleave_float(check,check);
+	}
+	maskALL = _cmu418_init_ones(1);
+	_cmu418_vstore_float(&ans,check,maskALL);
+	return ans;
 }
