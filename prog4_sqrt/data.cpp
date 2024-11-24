@@ -9,6 +9,7 @@ void initRandom(float *values, int N) {
     }
 }
 
+//看图可知
 // Generate data that gives high relative speedup
 void initGood(float *values, int N) {
     for (int i=0; i<N; i++)
@@ -23,7 +24,7 @@ void initBad(float *values, int N) {
     for (int i=0; i<N; i++)
     {
         // Todo: Choose values
-        values[i] = 1.0f;
+        values[i] = 3.0f;
     }
 }
 
